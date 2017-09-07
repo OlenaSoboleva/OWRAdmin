@@ -1,7 +1,6 @@
 package loader;
 
-import groovy.AttachmentLoader;
-import groovy.EmailReplier;
+import groovy.JiraTaskCreator;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -12,23 +11,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.List;
 
 
 public class App {
     private static CloseableHttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
 //    TODO: create and download in temp folder
     private static String baseDirLocation = Util.getMainFolder();
-    private static String baseURL = Util.getQaUrl();
+//    private static String baseURL = Util.getQaUrl();
 
     public static void main(String[] args) throws IOException {
         Util.checkDirectory(baseDirLocation);
+        JiraTaskCreator jiraTaskCreator = new JiraTaskCreator();
+        jiraTaskCreator.jiraGetTask();
 
-        AttachmentLoader attachmentLoader = new AttachmentLoader();
-        EmailReplier emailReplier = new EmailReplier();
-        List<String> folders = attachmentLoader.uploadAttachment();
-        for (String folder : folders) {
-               if (!Util.getFilesInFolder(getFolderPath(folder)).isEmpty()) {
+//
+//        AttachmentLoader attachmentLoader = new AttachmentLoader();
+//        EmailReplier emailReplier = new EmailReplier();
+//        List<String> folders = attachmentLoader.uploadAttachment();
+//        for (String folder : folders) {
+//               if (!Util.getFilesInFolder(getFolderPath(folder)).isEmpty()) {
 //                    {
 //                        HttpPost request = new HttpPost(baseURL+"j_spring_security_check");
 //                        ArrayList<NameValuePair> postParameters = new ArrayList<>();
@@ -52,12 +53,12 @@ public class App {
 //                        Assert.assertThat(result, CoreMatchers.containsString("Successfully uploaded the file"));
 //                    }
 //
-                   emailReplier.emailReply(folder);
-                   movefiles(folder);
+//                   emailReplier.emailReply(folder);
+//                   movefiles(folder);
                }
 
-            }
-    }
+//            }
+//    }
 
     private static String execute(HttpPost request) throws IOException {
         System.out.println(request);
