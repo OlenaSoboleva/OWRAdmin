@@ -8,7 +8,6 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import com.atlassian.util.concurrent.Promise
 import loader.Util
 
-
 class JiraTaskCreator {
 //    private static CloseableHttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
     static JiraRestClient restClient;
@@ -24,25 +23,26 @@ class JiraTaskCreator {
     }
 
     public void jiraGetTask() {
-//        HttpGet request = new HttpGet("https://tc-jira.atlassian.net/rest/api/2/search?maxResults=3&jql=summary~'Test API sub-task' and status=open and project=UKWEBRIO and issuetype=11101&fields=id,key");
+//        HttpGet request = new HttpGet("https://tc-jira.atlassian.net/rest/api/2/");
 
         JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
-        URI uri = new URI(jiraLink);
+        URI uri = new URI("https://tc-jira.atlassian.net/");
         restClient = factory.createWithBasicHttpAuthentication(uri, jiraUserName, jiraPassword);
 
-//        String jql = "summary~'Test API sub-task' and status=open and project=UKWEBRIO and issuetype=11101";
-        String jql= "project=UKWEBRIO";
+        String jql = "summary~'Test API sub-task' and status=open and project=UKWEBRIO and issuetype=11101";
+//        String jql= "project=UKWEBRIO";
         int maxPerQuery = 3;
         int startIndex = 0;
 
-        Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql,maxPerQuery,0);
-        searchJqlPromiseTest.claim().getIssues().each { Issue issue ->
+        Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql,maxPerQuery,startIndex);
+        searchJqlPromiseTest.claim().findAll().each { Issue issue ->
             System.out.println(issue.getKey());
         }
-
+//
 //        request.addHeader("Content-Type", "application/json");
 //        request.addHeader("Accept", "application/json");
 //        request.addHeader("Authorization", "Basic " + GetEncodedCredentials());
+//
 //
 //        execute(request);
 //
@@ -53,12 +53,14 @@ class JiraTaskCreator {
 
     }
 
-    private String GetEncodedCredentials() {
-        String mergedCredentials = String.format("{0}:{1}", jiraUserName, jiraPassword);
-        byte[] byteCredentials = mergedCredentials.getBytes("UTF-8");
-        return Base64.getEncoder().encodeToString(byteCredentials);
-    }
 
+//
+//    private String GetEncodedCredentials() {
+//        String mergedCredentials = String.format("{0}:{1}", jiraUserName, jiraPassword);
+//        byte[] byteCredentials = mergedCredentials.getBytes("UTF-8");
+//        return Base64.getEncoder().encodeToString(byteCredentials);
+//    }
+//
 //    private static String execute(HttpGet request) throws IOException {
 //        System.out.println(request);
 //

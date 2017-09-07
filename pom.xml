@@ -20,7 +20,7 @@
         <cucumber-html.version>0.2.3</cucumber-html.version>
         <exec-maven-plugin.version>1.4.0</exec-maven-plugin.version>
         <gherkin.version>2.12.2</gherkin.version>
-        <groovy.version>2.0.6</groovy.version>
+        <groovy.version>2.4.8</groovy.version>
         <gson.version>2.6.2</gson.version>
         <junit.version>4.12</junit.version>
         <json.version>1.1</json.version>
@@ -35,49 +35,14 @@
     </properties>
 
 
-    <dependencies>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client</artifactId>
-            <version>2.0.0-m2</version>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.atlassian.jira</groupId>-->
-            <!--<artifactId>jira-api</artifactId>-->
-            <!--<version>6.0</version>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client-api</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.atlassian.jira</groupId>-->
-            <!--<artifactId>jira-rest-java-client-core</artifactId>-->
-            <!--<version>3.0.0</version>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>14.0-rc1</version>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.codehaus.jettison</groupId>-->
-            <!--<artifactId>jettison</artifactId>-->
-            <!--<version>1.0.1</version>-->
-        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>2.4.12</version>
-        </dependency>
+
+    <dependencies>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.7</version>
+            <version>${groovy.version}</version>
         </dependency>
-
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-groovy</artifactId>
@@ -156,104 +121,51 @@
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.3</version>
         </dependency>
         <dependency>
-        <groupId>com.atlassian.httpclient</groupId>
-        <artifactId>atlassian-httpclient-api</artifactId>
-        <version>0.23.4</version>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.atlassian.httpclient</groupId>-->
-            <!--<artifactId>atlassian-httpclient-plugin</artifactId>-->
-            <!--<version>0.23.4</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-apache-httpcomponents-plugin</artifactId>
-            <version>0.17.0-m01</version>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client</artifactId>
+            <version>2.0.0-m2</version>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-spi</artifactId>
-            <version>0.17.0-m01</version>
-        </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>com.atlassian.httpclient</groupId>-->
-            <!--<artifactId>atlassian-httpclient-parent</artifactId>-->
-            <!--<version>0.23.4</version>-->
-            <!--<type>pom</type>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-apache-httpcomponents</artifactId>
-            <version>0.16.11</version>
-            <scope>runtime</scope>
-        </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.apache.httpcomponents</groupId>-->
-        <!--<artifactId>httpclient-cache</artifactId>-->
-        <!--<version>4.2.1-atlassian-2</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.atlassian.util.concurrent</groupId>-->
-            <!--<artifactId>atlassian-util-concurrent</artifactId>-->
-            <!--<version>2.3.0</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>io.atlassian.util.concurrent</groupId>
-            <artifactId>atlassian-util-concurrent</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope> <!-- Uses the application's SAL instead of bundling it into the plugin. -->
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>23.0</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.3</version>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-core</artifactId>
+            <version>3.0.0</version>
         </dependency>
 
     </dependencies>
 
     <build>
-         <plugins>
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-compiler-plugin</artifactId>
-                 <version>3.5.1</version>
-                 <configuration>
-                     <source>1.7</source>
-                     <target>1.7</target>
-                     <compilerId>groovy-eclipse-compiler</compilerId>
-                 </configuration>
-                 <dependencies>
-                     <dependency>
-                         <groupId>org.codehaus.groovy</groupId>
-                         <artifactId>groovy-eclipse-compiler</artifactId>
-                         <version>2.8.0-01</version>
-                     </dependency>
-                     <dependency>
-                         <groupId>org.codehaus.groovy</groupId>
-                         <artifactId>groovy-eclipse-batch</artifactId>
-                         <version>2.1.5-03</version>
-                     </dependency>
-                 </dependencies>
-             </plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.8.0-01</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.1.5-03</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
