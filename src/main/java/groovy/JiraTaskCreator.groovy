@@ -2,76 +2,77 @@ package groovy
 
 import com.atlassian.jira.rest.client.JiraRestClient
 import com.atlassian.jira.rest.client.JiraRestClientFactory
+import com.atlassian.jira.rest.client.domain.BasicIssue
 import com.atlassian.jira.rest.client.domain.Issue
 import com.atlassian.jira.rest.client.domain.SearchResult
+import com.atlassian.jira.rest.client.domain.input.ComplexIssueInputFieldValue
+import com.atlassian.jira.rest.client.domain.input.FieldInput
+import com.atlassian.jira.rest.client.domain.input.IssueInput
+import com.atlassian.jira.rest.client.domain.input.IssueInputBuilder
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import com.atlassian.util.concurrent.Promise
 import loader.Util
 
 class JiraTaskCreator {
-//    private static CloseableHttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
+
     static JiraRestClient restClient;
 
     String jiraUserName
     String jiraPassword
+    String jiraUrl
 
     JiraTaskCreator() {
 
         this.jiraUserName = Util.getJiraLogin()
         this.jiraPassword = Util.getJiraPassword()
+        this.jiraUrl = Util.getJiraUrl()
 
     }
 
     public void jiraGetTask() {
-//        HttpGet request = new HttpGet("https://tc-jira.atlassian.net/rest/api/2/");
-
         JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
-        URI uri = new URI("https://tc-jira.atlassian.net/");
+        URI uri = new URI(jiraUrl);
         restClient = factory.createWithBasicHttpAuthentication(uri, jiraUserName, jiraPassword);
-
-        String jql = "summary~'Test API sub-task' and status=open and project=UKWEBRIO and issuetype=11101";
-//        String jql= "project=UKWEBRIO";
-        int maxPerQuery = 3;
+//
+//        String jql = "summary~'Test API sub-task' and status=open and project=UKWEBRIO and issuetype=11101";
+        String jql = "issuekey=UKWEBRIO-12830";
+        int maxPerQuery = 1;
         int startIndex = 0;
 
-        Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql,maxPerQuery,startIndex);
-        searchJqlPromiseTest.claim().findAll().each { Issue issue ->
-            System.out.println(issue.getKey());
-        }
-//
-//        request.addHeader("Content-Type", "application/json");
-//        request.addHeader("Accept", "application/json");
-//        request.addHeader("Authorization", "Basic " + GetEncodedCredentials());
-//
-//
-//        execute(request);
-//
-//        CloseableHttpResponse response = HttpClients.createMinimal().execute(request);
-//        InputStream responseStream = response.getEntity().getContent();
-//
-//        println IOUtils.toString(responseStream, Charset.defaultCharset());
+        Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex);
+        String project = "UKWEBRIO"
+        String summary = "Testing the Issue creation"
+//        searchJqlPromiseTest.claim().getIssues().each { BasicIssue issue ->
+//            System.out.println(issue.getKey());
+//        }
+
+        BasicIssue parentIssue = searchJqlPromiseTest.claim().getIssues()[0]
+        println parentIssue.key
+
+
+        IssueInputBuilder issueBuilder = new IssueInputBuilder("UKWEBRIO", 11110, summary);
+
+        issueBuilder.setDescription(summary);
+
+        issueBuilder.setFixVersions(restClient.getIssueClient().getIssue("UKWEBRIO-12830").claim().getFixVersions())
+        IssueInput issueInput = issueBuilder.build();
+
+        //   List value = restClient.getIssueClient().getIssue("UKWEBRIO-12830").claim().fields.findAll({p -> p.id == "parent"}).value
+
+        HashMap valuesMap = new HashMap()
+        valuesMap.put("key", "UKWEBRIO-12793")
+        ComplexIssueInputFieldValue complexIssueInputFieldValue = new ComplexIssueInputFieldValue(valuesMap)
+        FieldInput field = new FieldInput("parent", complexIssueInputFieldValue)
+
+        issueInput.fields.put("parent", field)
+
+        Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput);
+        BasicIssue basicIssue = promise.claim();
+        Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey());
+
+        Issue issue = promiseJavaIssue.claim();
+        System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary()));
 
     }
-
-
-//
-//    private String GetEncodedCredentials() {
-//        String mergedCredentials = String.format("{0}:{1}", jiraUserName, jiraPassword);
-//        byte[] byteCredentials = mergedCredentials.getBytes("UTF-8");
-//        return Base64.getEncoder().encodeToString(byteCredentials);
-//    }
-//
-//    private static String execute(HttpGet request) throws IOException {
-//        System.out.println(request);
-//
-//        String content = IOUtils.toString(request);
-//        System.out.println(content);
-//
-//        CloseableHttpResponse response = httpClient.execute(request);
-//        System.out.println(response);
-//        String responseString = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
-//        System.out.println(responseString);
-//        return responseString;
-//    }
 
 }

@@ -28,9 +28,11 @@ public class Util {
     private static final String PASSWORD = "password";
     private static final String EMAILUSERNAME = "emailUserName";
     private static final String EMAILPASSWORD = "emailPassword";
-    private static final String MAIL_FOLDERS  = "mailFolders";
-    private static final String JIRAUSERNAME  = "jiraUserName";
-    private static final String JIRAPASSWORD  = "jiraPassword";
+    private static final String MAIL_FOLDERS = "mailFolders";
+    private static final String JIRAUSERNAME = "jiraUserName";
+    private static final String JIRAPASSWORD = "jiraPassword";
+    private static final String JIRAURL = "jiraURL";
+
 
     public static String getTimeStamp() {
         return new SimpleDateFormat(TIME_STAMP_FORMAT).format(new Date());
@@ -85,6 +87,19 @@ public class Util {
         return properties.getPropertyValue(QAURL);
     }
 
+    public static String getJiraUrl() {
+        LoadProperties properties = new LoadProperties();
+
+        try {
+            properties.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties.getPropertyValue(JIRAURL);
+    }
+
+
     public static String getLogin() {
         LoadProperties properties = new LoadProperties();
 
@@ -96,6 +111,7 @@ public class Util {
 
         return properties.getPropertyValue(LOGIN);
     }
+
     public static String getPassword() {
         LoadProperties properties = new LoadProperties();
 
@@ -107,6 +123,7 @@ public class Util {
 
         return properties.getPropertyValue(PASSWORD);
     }
+
     public static String getUserNameMail() {
         LoadProperties properties = new LoadProperties();
 
@@ -118,6 +135,7 @@ public class Util {
 
         return properties.getPropertyValue(EMAILUSERNAME);
     }
+
     public static String getPasswordMail() {
         LoadProperties properties = new LoadProperties();
 
@@ -139,7 +157,7 @@ public class Util {
             e.printStackTrace();
         }
         String s = properties.getPropertyValue(MAIL_FOLDERS);
-        return new ArrayList<>(Arrays.asList(s.split(","))) ;
+        return new ArrayList<>(Arrays.asList(s.split(",")));
     }
 
 
@@ -207,6 +225,7 @@ public class Util {
             }
         }
     }
+
     public static String getJiraLogin() {
         LoadProperties properties = new LoadProperties();
 
@@ -218,6 +237,7 @@ public class Util {
 
         return properties.getPropertyValue(JIRAUSERNAME);
     }
+
     public static String getJiraPassword() {
         LoadProperties properties = new LoadProperties();
 
