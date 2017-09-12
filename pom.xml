@@ -139,6 +139,12 @@
             <artifactId>jira-rest-java-client-core</artifactId>
             <version>3.0.0</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.jira.plugins</groupId>-->
+            <!--<artifactId>jira-greenhopper-plugin</artifactId>-->
+            <!--<version>6.7.4</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
     </dependencies>
 
@@ -216,6 +222,11 @@
             <id>labs</id>
             <url>http://labs.consol.de/maven/repository</url>
         </repository>
+
+        <!--<repository>-->
+            <!--<id>jira.plugins</id>-->
+            <!--<url>https://mvnrepository.com/artifact/com.atlassian.jira.plugins/jira-greenhopper-plugin</url>-->
+        <!--</repository>-->
 
         <repository>
             <id>atlassian-public</id>
