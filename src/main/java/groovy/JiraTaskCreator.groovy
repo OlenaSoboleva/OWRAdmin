@@ -61,15 +61,19 @@ class JiraTaskCreator {
         String environment = "UAT/LIVE"
         FieldInput fieldInputEnvironment = new FieldInput("environment", environment)
         issueInput.fields.put("environment", fieldInputEnvironment)
-
         generateIssueInput(issueInput, "parent", parentIssue.key)
-
         Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput);
         BasicIssue basicIssue = promise.claim();
         Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey());
         Issue issue = promiseJavaIssue.claim();
-
+        addAttachment(issue)
         System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary() + "\n" + issue.key + "\n" + issue.self));
+    }
+
+    private void addAttachment(Issue issue){
+        InputStream stream = new FileInputStream("c:/temp/test.txt")
+        URI attachmentURI = issue.getAttachmentsUri();
+        restClient.issueClient.addAttachment(attachmentURI, stream, "test.txt")
     }
 
     private void generateIssueInput(IssueInput issueInput, String fieldName, String id) {
