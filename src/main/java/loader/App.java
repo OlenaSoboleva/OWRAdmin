@@ -1,7 +1,6 @@
 package loader;
 
 import groovy.JiraTaskCreator;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -10,7 +9,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 
 public class App {
@@ -65,12 +63,12 @@ public class App {
         if (request.getEntity().getContentLength() > 25600L) {
             System.out.println("Content is too long to display");
         } else {
-            String content = IOUtils.toString(request.getEntity().getContent(), Charset.defaultCharset());
+            String content = request.getEntity().getContent().toString();
             System.out.println(content);
         }
         CloseableHttpResponse response = httpClient.execute(request);
         System.out.println(response);
-        String responseString = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
+        String responseString = response.getEntity().getContent().toString();
         System.out.println(responseString);
         return responseString;
     }

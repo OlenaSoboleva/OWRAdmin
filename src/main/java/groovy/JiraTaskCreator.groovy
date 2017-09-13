@@ -28,20 +28,18 @@ class JiraTaskCreator {
         this.jiraUrl = Util.getJiraUrl()
 
     }
-
     public void jiraGetTask() {
         JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
         URI uri = new URI("https://tc-jira.atlassian.net/");
         restClient = factory.createWithBasicHttpAuthentication(uri, jiraUserName, jiraPassword);
-//
+
         String jql = "summary~'Test API sub-task' and status!='Done' and project=UKWEBRIO and issuetype=11101";
-//        String jql = "issuekey=UKWEBRIO-12830";
         int maxPerQuery = 1;
         int startIndex = 0;
 
         Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex);
         String project = "UKWEBRIO"
-        Long issueTypeId = 11110
+        Long issueTypeId = 5
         String summary = "Testing the Issue creation"
         String description = "Upload latest Red Routes to UAT/LIVE"
 
@@ -52,42 +50,33 @@ class JiraTaskCreator {
         issueBuilder.setDescription(description);
         issueBuilder.setFixVersions(restClient.getIssueClient().getIssue(parentIssue.key).claim().getFixVersions())
 
-        IssueInput issueInput = issueBuilder.build();
-//        List value = restClient.getIssueClient().getIssue("UKWEBRIO-12793").claim().fields.findAll({p -> p.id == "parent"}).value
-//        String sprintId = restClient.getIssueClient().getIssue(parentIssue.key).claim().fields.findAll({p -> p.name == "Sprint"}).get(0).id
         String retailGroupId = restClient.getIssueClient().getIssue(parentIssue.key).claim().fields.findAll({ p -> p.name == "Retail Group" }).get(0).id
+        String retailGroupValue = restClient.getIssueClient().getIssue(parentIssue.key).claim().fields.findAll({ p -> p.name == "Retail Group" }).get(0).getValue().getJSONObject(0).get("value");
+        Map<String, Object> groupCustomField = new HashMap<String, Object>();
+        groupCustomField.put("value",retailGroupValue) ;
+        FieldInput groupField = new FieldInput(retailGroupId, Arrays.asList(new ComplexIssueInputFieldValue(groupCustomField)));
+        issueBuilder.setFieldInput(groupField);
 
-//        String sprint = restClient.getIssueClient().getIssue(parentIssue.key).claim().fields.findAll({p -> p.name == "Sprint"}).get(0).getValue().getJSONObject(0).get("value")
-
+        IssueInput issueInput = issueBuilder.build();
         String environment = "UAT/LIVE"
-        FieldInput fieldInput = new FieldInput("environment", environment)
-        issueInput.fields.put("environment", fieldInput)
-
-        String retailGroup = restClient.getIssueClient().getIssue(parentIssue.key).claim().fields.findAll({ p -> p.name == "Retail Group" }).get(0).getValue().getJSONObject(0).get("value")
-
+        FieldInput fieldInputEnvironment = new FieldInput("environment", environment)
+        issueInput.fields.put("environment", fieldInputEnvironment)
 
         generateIssueInput(issueInput, "parent", parentIssue.key)
-//        generateIssueInput(issueInput,environmentId,environment)
-//        generateIssueInput(issueInput,sprintId,sprint)
-        generateIssueInput(issueInput, retailGroupId, retailGroup)
 
         Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput);
         BasicIssue basicIssue = promise.claim();
-
         Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey());
-
         Issue issue = promiseJavaIssue.claim();
-        System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary() + "\n" + issue.key + "\n" + issue.self));
 
+        System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary() + "\n" + issue.key + "\n" + issue.self));
     }
 
     private void generateIssueInput(IssueInput issueInput, String fieldName, String id) {
         HashMap valuesMap = new HashMap()
-        valuesMap.put("key", id)//parentIssue.key
+        valuesMap.put("key", id)
         ComplexIssueInputFieldValue complexIssueInputFieldValue = new ComplexIssueInputFieldValue(valuesMap)
-        FieldInput parentField = new FieldInput(fieldName, complexIssueInputFieldValue)//"parent"
-
-        issueInput.fields.put(fieldName, parentField)//"parent
+        FieldInput fieldInput = new FieldInput(fieldName, complexIssueInputFieldValue)
+        issueInput.fields.put(fieldName, fieldInput)
     }
-
 }

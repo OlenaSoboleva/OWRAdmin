@@ -30,7 +30,7 @@
         <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.10</build-helper-maven-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
-        <jira.version>7.0</jira.version>
+        <jira.version>6.0</jira.version>
         <amps.version>6.3.3</amps.version>
     </properties>
 
@@ -38,13 +38,6 @@
 
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.atlassian.jira/jira-api -->
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-api</artifactId>
-            <version>7.0.0</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -144,13 +137,12 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-core</artifactId>
-            <version>4.0.0</version>
+            <version>3.0.0</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>com.atlassian.jira.plugins</groupId>-->
-            <!--<artifactId>jira-greenhopper-plugin</artifactId>-->
-            <!--<version>6.7.4</version>-->
-            <!--<scope>provided</scope>-->
+            <!--<groupId>com.atlassian.jira</groupId>-->
+            <!--<artifactId>jira-rest-java-client-api</artifactId>-->
+            <!--<version>4.0.0</version>-->
         <!--</dependency>-->
 
     </dependencies>
