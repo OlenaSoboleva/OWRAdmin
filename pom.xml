@@ -34,9 +34,6 @@
         <amps.version>6.3.3</amps.version>
     </properties>
 
-
-
-
     <dependencies>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -139,12 +136,6 @@
             <artifactId>jira-rest-java-client-core</artifactId>
             <version>3.0.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.atlassian.jira</groupId>-->
-            <!--<artifactId>jira-rest-java-client-api</artifactId>-->
-            <!--<version>4.0.0</version>-->
-        <!--</dependency>-->
-
     </dependencies>
 
     <build>
@@ -221,12 +212,6 @@
             <id>labs</id>
             <url>http://labs.consol.de/maven/repository</url>
         </repository>
-
-        <!--<repository>-->
-            <!--<id>jira.plugins</id>-->
-            <!--<url>https://mvnrepository.com/artifact/com.atlassian.jira.plugins/jira-greenhopper-plugin</url>-->
-        <!--</repository>-->
-
         <repository>
             <id>atlassian-public</id>
             <url>https://packages.atlassian.com/maven/repository/public</url>

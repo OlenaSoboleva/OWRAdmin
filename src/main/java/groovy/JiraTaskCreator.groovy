@@ -28,7 +28,7 @@ class JiraTaskCreator {
         this.jiraUrl = Util.getJiraUrl()
 
     }
-    public void jiraGetTask() {
+    public void jiraGetTask(String SubTaskfolder,File file) {
         JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
         URI uri = new URI("https://tc-jira.atlassian.net/");
         restClient = factory.createWithBasicHttpAuthentication(uri, jiraUserName, jiraPassword);
@@ -39,12 +39,13 @@ class JiraTaskCreator {
 
         Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex);
         String project = "UKWEBRIO"
-        Long issueTypeId = 5
+        Long issueTypeId = 11110
         String summary = "Testing the Issue creation"
         String description = "Upload latest Red Routes to UAT/LIVE"
 
         BasicIssue parentIssue = searchJqlPromiseTest.claim().getIssues()[0]
         println parentIssue.key
+
 
         IssueInputBuilder issueBuilder = new IssueInputBuilder(project, issueTypeId, summary);
         issueBuilder.setDescription(description);
@@ -62,18 +63,20 @@ class JiraTaskCreator {
         FieldInput fieldInputEnvironment = new FieldInput("environment", environment)
         issueInput.fields.put("environment", fieldInputEnvironment)
         generateIssueInput(issueInput, "parent", parentIssue.key)
+
         Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput);
         BasicIssue basicIssue = promise.claim();
         Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey());
         Issue issue = promiseJavaIssue.claim();
-        addAttachment(issue)
+        addAttachment(issue,file)
         System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary() + "\n" + issue.key + "\n" + issue.self));
+
     }
 
-    private void addAttachment(Issue issue){
-        InputStream stream = new FileInputStream("c:/temp/test.txt")
+    private void addAttachment(Issue issue,File file){
+        InputStream stream = new FileInputStream(file)
         URI attachmentURI = issue.getAttachmentsUri();
-        restClient.issueClient.addAttachment(attachmentURI, stream, "test.txt")
+        restClient.issueClient.addAttachment(attachmentURI, stream, file.getName())
     }
 
     private void generateIssueInput(IssueInput issueInput, String fieldName, String id) {
