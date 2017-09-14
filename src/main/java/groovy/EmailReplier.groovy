@@ -34,7 +34,6 @@ public class EmailReplier {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password)
                     }
-
                 });
         this.store = session.getStore("imaps")
         store.connect("imap.gmail.com", username, password)
@@ -47,8 +46,7 @@ public class EmailReplier {
         this.attachments = new ArrayList<File>()
     }
 
-
-    public void emailReply(String replyfolder) {
+    public void emailReply(String replyfolder, Boolean result) {
         Folder folder = store.getFolder(replyfolder)
         folder.open(Folder.READ_WRITE)
         Message[] messages = folder.search(unseenFlagTerm)
@@ -63,26 +61,48 @@ public class EmailReplier {
                     if (!(Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) || StringUtils.isNotBlank(bodyPart.getFileName()))) {
                         continue; // dealing with attachments only
                     }
-                    Address[] all = messages[lastMessageIndex].allRecipients
-
-                    Address[] cc = all
-                            .findAll { !(it == (new InternetAddress(username))) }
-
-                    Address[] to = messages[lastMessageIndex].from
-                    Message message = new MimeMessage(session)
-                    message = message.reply(false)
-                    message.setSubject("RE: " + messages[lastMessageIndex].subject)
-                    message.setFrom(new InternetAddress(username))
-                    message.setReplyTo(cc)
-                    message.setReplyTo(to)
-                    message.addRecipients(Message.RecipientType.TO, to)
-                    message.addRecipients(Message.RecipientType.CC, cc)
-                    message.setText("File has been loaded")
-                    Transport.send(message);
-                    println(messages[lastMessageIndex].subject +" received on: " +messages[lastMessageIndex].receivedDate+ " message replied successfully")
-                    messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true);
+                   if(result) {
+                       successReply(messages, lastMessageIndex)
+                   }
+                    else{
+                       errorReply(messages, lastMessageIndex)
+                   }
                 }
             }
         }
+    }
+
+    private errorReply(Message[] messages, int lastMessageIndex) {
+        Address[] to = new InternetAddress("selena.soboleva@gmail.com")
+        Message message = new MimeMessage(session)
+        message = message.reply(false)
+        message.setSubject("RE: ERROR FILE LOADING" + messages[lastMessageIndex].subject)
+        message.setFrom(new InternetAddress(username))
+        message.addRecipients(Message.RecipientType.TO, to)
+        message.setText("ERROR FILE LOADING")
+        Transport.send(message);
+        println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully with status info")
+        messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true);
+    }
+
+    private successReply(Message[] messages, int lastMessageIndex) {
+        Address[] all = messages[lastMessageIndex].allRecipients
+
+        Address[] cc = all
+                .findAll { !(it == (new InternetAddress(username))) }
+
+        Address[] to = messages[lastMessageIndex].from
+        Message message = new MimeMessage(session)
+        message = message.reply(false)
+        message.setSubject("RE: " + messages[lastMessageIndex].subject)
+        message.setFrom(new InternetAddress(username))
+        message.setReplyTo(cc)
+        message.setReplyTo(to)
+        message.addRecipients(Message.RecipientType.TO, to)
+        message.addRecipients(Message.RecipientType.CC, cc)
+        message.setText("File has been loaded")
+        Transport.send(message);
+        println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully")
+        messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true);
     }
 }

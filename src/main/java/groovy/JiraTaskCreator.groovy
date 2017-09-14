@@ -31,6 +31,7 @@ class JiraTaskCreator {
         this.jiraJql = Util.getJiraJql()
         this.jiraProject = Util.getJiraProject()
         this.jiraIssueTypeId = Util.getJiraIssueTypeId()
+        this.jiraEnvironment = Util.getJiraEnvironment()
     }
     public void jiraCreateSubTask(String subTaskfolder, File file) {
         JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();

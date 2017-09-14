@@ -14,8 +14,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,52 +25,57 @@ import java.util.List;
 
 public class App {
     private static CloseableHttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
-//    TODO: create and download in temp folder
+    //    TODO: create and download in temp folder
     private static String baseDirLocation = Util.getMainFolder();
     private static String baseURL = Util.getQaUrl();
 
     public static void main(String[] args) throws IOException {
         Util.checkDirectory(baseDirLocation);
         JiraTaskCreator jiraTaskCreator = new JiraTaskCreator();
-
-
-
         AttachmentLoader attachmentLoader = new AttachmentLoader();
         EmailReplier emailReplier = new EmailReplier();
         List<String> folders = attachmentLoader.uploadAttachment();
         for (String folder : folders) {
-               if (!Util.getFilesInFolder(getFolderPath(folder)).isEmpty()) {
-                    {
-                        HttpPost request = new HttpPost(baseURL+"j_spring_security_check");
-                        ArrayList<NameValuePair> postParameters = new ArrayList<>();
-                        postParameters.add(new BasicNameValuePair("j_password", Util.getLogin()));
-                        postParameters.add(new BasicNameValuePair("j_username", Util.getPassword()));
-                        request.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
-                        execute(request);
-                    }
-                    {
-                        HttpPost request = new HttpPost(baseURL+"uploadFile?uploadCode=" + folder);
-
-                        String fileName = getFileNameInFolder(folder);
-                        File file = new File(getFolderPath(folder) + "\\" + fileName);
-
-                        MultipartEntityBuilder builder = MultipartEntityBuilder.create()
-                                .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                                .addBinaryBody("file", file, ContentType.DEFAULT_BINARY, fileName)
-                                .addTextBody("immediately", "Y", ContentType.TEXT_PLAIN);
-                        request.setEntity(builder.build());
-                        String result = execute(request);
-                        Assert.assertThat(result, CoreMatchers.containsString("Successfully uploaded the file"));
-
-                        jiraTaskCreator.jiraCreateSubTask(folder,file);
-                    }
-
-                   emailReplier.emailReply(folder);
-                   movefiles(folder);
-               }
-
+            if (!Util.getFilesInFolder(getFolderPath(folder)).isEmpty()) {
+                String fileName = getFileNameInFolder(folder);
+                File file = new File(getFolderPath(folder) + "\\" + fileName);
+                Boolean resultUpload = httpPostFile(folder, baseURL, file);
+                if (resultUpload){
+//                   httpPostFile(folder,prodURL,file);
+                    jiraTaskCreator.jiraCreateSubTask(folder, file);
+                    movefiles(folder);
+                }
+                emailReplier.emailReply(folder,resultUpload);
             }
-          System.exit(0);
+
+        }
+        System.exit(0);
+    }
+
+    private static boolean httpPostFile(String folder, String url, File file) throws IOException {
+        boolean resultUpload = false;
+        {
+            HttpPost request = new HttpPost(url + "j_spring_security_check");
+            ArrayList<NameValuePair> postParameters = new ArrayList<>();
+            postParameters.add(new BasicNameValuePair("j_password", Util.getLogin()));
+            postParameters.add(new BasicNameValuePair("j_username", Util.getPassword()));
+            request.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
+            execute(request);
+        }
+        {
+            HttpPost request = new HttpPost(url + "uploadFile?uploadCode=" + folder);
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                    .addBinaryBody("file", file, ContentType.DEFAULT_BINARY, file.getName())
+                    .addTextBody("immediately", "Y", ContentType.TEXT_PLAIN);
+            request.setEntity(builder.build());
+            String result = execute(request);
+            if (result.contains("Successfully uploaded the file")) {
+                resultUpload = true;
+            }
+//            Assert.assertThat(result, CoreMatchers.containsString("Successfully uploaded the file"));
+        }
+        return resultUpload;
     }
 
     private static String execute(HttpPost request) throws IOException {
@@ -91,18 +94,19 @@ public class App {
     }
 
     private static String getFileNameInFolder(String folder) {
-        File file = new File(baseDirLocation +"\\"+ folder + "\\unprocessed");
+        File file = new File(baseDirLocation + "\\" + folder + "\\unprocessed");
         File[] listOfFiles = file.listFiles();
         return listOfFiles[0].getName();
     }
+
     private static String getFolderPath(String folder) {
-        File file = new File(baseDirLocation +"\\"+ folder + "\\unprocessed");
+        File file = new File(baseDirLocation + "\\" + folder + "\\unprocessed");
         return file.getAbsolutePath();
     }
 
     private static void movefiles(String folder) throws FileNotFoundException {
-        File baseDir = new File(baseDirLocation +"\\"+ folder + "\\unprocessed");
-        File destDir = new File(baseDirLocation +"\\"+ folder + "\\processed");
+        File baseDir = new File(baseDirLocation + "\\" + folder + "\\unprocessed");
+        File destDir = new File(baseDirLocation + "\\" + folder + "\\processed");
         File[] files = baseDir.listFiles();
 
         for (File file : files) {
