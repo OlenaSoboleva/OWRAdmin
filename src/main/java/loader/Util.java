@@ -32,7 +32,10 @@ public class Util {
     private static final String JIRAUSERNAME = "jiraUserName";
     private static final String JIRAPASSWORD = "jiraPassword";
     private static final String JIRAURL = "jiraURL";
-
+    private static final String JIRAJQL = "jirajql";
+    private static final String JIRAPROJECT = "jiraproject";
+    private static final String JIRAENVIRONMENT = "jiraenvironment";
+    private static final String JIRAISSUETYPEID = "jiraIssueTypeId";
 
     public static String getTimeStamp() {
         return new SimpleDateFormat(TIME_STAMP_FORMAT).format(new Date());
@@ -250,5 +253,52 @@ public class Util {
         return properties.getPropertyValue(JIRAPASSWORD);
     }
 
+
+    public static String getJiraJql() {
+        LoadProperties properties = new LoadProperties();
+
+        try {
+            properties.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties.getPropertyValue(JIRAJQL);
+    }
+
+    public static String getJiraProject() {
+        LoadProperties properties = new LoadProperties();
+
+        try {
+            properties.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties.getPropertyValue(JIRAPROJECT);
+    }
+    public static String getJiraEnvironment() {
+        LoadProperties properties = new LoadProperties();
+
+        try {
+            properties.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties.getPropertyValue(JIRAENVIRONMENT);
+    }
+
+    public static String getJiraIssueTypeId() {
+        LoadProperties properties = new LoadProperties();
+
+        try {
+            properties.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties.getPropertyValue(JIRAISSUETYPEID);
+    }
 }
 

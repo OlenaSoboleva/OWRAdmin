@@ -48,8 +48,8 @@ public class EmailReplier {
     }
 
 
-    public void emailReply(String Replyfolder) {
-        Folder folder = store.getFolder(Replyfolder)
+    public void emailReply(String replyfolder) {
+        Folder folder = store.getFolder(replyfolder)
         folder.open(Folder.READ_WRITE)
         Message[] messages = folder.search(unseenFlagTerm)
         folder.fetch(messages, fetchProfile)

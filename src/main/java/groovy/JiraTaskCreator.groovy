@@ -1,21 +1,14 @@
 package groovy
 
-import com.atlassian.jira.rest.client.domain.Comment
 import com.atlassian.jira.rest.client.JiraRestClient
 import com.atlassian.jira.rest.client.JiraRestClientFactory
 import com.atlassian.jira.rest.client.domain.BasicIssue
 import com.atlassian.jira.rest.client.domain.Issue
 import com.atlassian.jira.rest.client.domain.SearchResult
 import com.atlassian.jira.rest.client.domain.Transition
-import com.atlassian.jira.rest.client.domain.input.ComplexIssueInputFieldValue
-import com.atlassian.jira.rest.client.domain.input.FieldInput
-import com.atlassian.jira.rest.client.domain.input.IssueInput
-import com.atlassian.jira.rest.client.domain.input.IssueInputBuilder
-import com.atlassian.jira.rest.client.domain.input.TransitionInput
+import com.atlassian.jira.rest.client.domain.input.*
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
-import com.atlassian.jira.util.Predicate
 import com.atlassian.util.concurrent.Promise
-import com.google.common.collect.Iterables
 import loader.Util
 
 class JiraTaskCreator {
@@ -25,31 +18,37 @@ class JiraTaskCreator {
     String jiraUserName
     String jiraPassword
     String jiraUrl
+    String jiraJql
+    String jiraProject
+    String jiraEnvironment
+    String jiraIssueTypeId
 
     JiraTaskCreator() {
 
         this.jiraUserName = Util.getJiraLogin()
         this.jiraPassword = Util.getJiraPassword()
         this.jiraUrl = Util.getJiraUrl()
-
+        this.jiraJql = Util.getJiraJql()
+        this.jiraProject = Util.getJiraProject()
+        this.jiraIssueTypeId = Util.getJiraIssueTypeId()
     }
-    public void jiraGetTask(String subTaskfolder,File file) {
+    public void jiraCreateSubTask(String subTaskfolder, File file) {
         JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
-        URI uri = new URI("https://tc-jira.atlassian.net/");
+        URI uri = new URI(jiraUrl);
         restClient = factory.createWithBasicHttpAuthentication(uri, jiraUserName, jiraPassword);
 
-        String jql = "summary~'Test API sub-task' and status!='Done' and project=UKWEBRIO and issuetype=11101";
+        String jql = jiraJql;
         int maxPerQuery = 1;
         int startIndex = 0;
 
         Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex);
-        String project = "UKWEBRIO"
-        Long issueTypeId = 5
-        String summary = "Testing the Issue creation"
-        String description = "Upload latest Red Routes to UAT/LIVE"
+        String project = jiraProject
+        Long issueTypeId = Long.parseLong(jiraIssueTypeId)
+        String summary = file.getName()+" Testing the Issue creation"
+        String description = "Upload latest "+subTaskfolder+" to "+jiraEnvironment
 
         BasicIssue parentIssue = searchJqlPromiseTest.claim().getIssues()[0]
-        println parentIssue.key
+        println "Parent issue: "+parentIssue.key
 
         IssueInputBuilder issueBuilder = new IssueInputBuilder(project, issueTypeId, summary);
         issueBuilder.setDescription(description);
@@ -63,10 +62,12 @@ class JiraTaskCreator {
         issueBuilder.setFieldInput(groupField);
 
         IssueInput issueInput = issueBuilder.build();
-        String environment = "UAT/LIVE"
+
+        String environment = jiraEnvironment
         FieldInput fieldInputEnvironment = new FieldInput("environment", environment)
         issueInput.fields.put("environment", fieldInputEnvironment)
         generateIssueInput(issueInput, "parent", parentIssue.key)
+
         Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput);
         BasicIssue basicIssue = promise.claim();
         Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey());
@@ -74,7 +75,7 @@ class JiraTaskCreator {
         addAttachment(issue, file)
         final Transition transition = restClient.getIssueClient().getTransitions(issue.getTransitionsUri()).get().find({p ->p.name=="Done"})
         restClient.getIssueClient().transition(issue, new TransitionInput(transition.getId())).claim()
-        System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary() + "\n" + issue.key + "\n" + issue.self))
+        System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary() + "\n" + issue.key + "\n" + issue.self+ "\n" + issue.status))
     }
 
     private void addAttachment(Issue issue,File file){

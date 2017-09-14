@@ -3,6 +3,7 @@ package loader;
 import groovy.AttachmentLoader;
 import groovy.EmailReplier;
 import groovy.JiraTaskCreator;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,6 +20,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,14 +64,15 @@ public class App {
                         String result = execute(request);
                         Assert.assertThat(result, CoreMatchers.containsString("Successfully uploaded the file"));
 
-                        jiraTaskCreator.jiraGetTask(folder,file);
+                        jiraTaskCreator.jiraCreateSubTask(folder,file);
                     }
 
-//                   emailReplier.emailReply(folder);
+                   emailReplier.emailReply(folder);
                    movefiles(folder);
                }
 
             }
+          System.exit(0);
     }
 
     private static String execute(HttpPost request) throws IOException {
@@ -77,12 +80,12 @@ public class App {
         if (request.getEntity().getContentLength() > 25600L) {
             System.out.println("Content is too long to display");
         } else {
-            String content = request.getEntity().getContent().toString();
+            String content = IOUtils.toString(request.getEntity().getContent(), Charset.defaultCharset());
             System.out.println(content);
         }
         CloseableHttpResponse response = httpClient.execute(request);
         System.out.println(response);
-        String responseString = response.getEntity().getContent().toString();
+        String responseString = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
         System.out.println(responseString);
         return responseString;
     }
