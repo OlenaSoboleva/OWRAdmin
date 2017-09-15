@@ -1,6 +1,7 @@
 package groovy
 
 import groovy.time.TimeCategory
+import loader.StreamUtil
 import loader.Util
 import org.apache.commons.lang.StringUtils
 
@@ -26,8 +27,9 @@ class AttachmentLoader {
     Date currentDate = new Date()
     Date sinceDate
     List<File> attachments
-    List<String> folders = Util.getMailFolders()
     Map map = [:]
+
+
 
     AttachmentLoader() {
         props.setProperty("mail.store.protocol", "imaps")
@@ -56,16 +58,15 @@ class AttachmentLoader {
         this.attachments = new ArrayList<File>()
     }
 
-    public List<String> uploadAttachment() {
-        for (int folderIndex = 0; folderIndex < folders.size(); folderIndex++) {
-            Folder folder = store.getFolder(folders.get(folderIndex))
+    public Map<String,File> uploadAttachment(String malefolder) {
+            Folder folder = store.getFolder(malefolder)
             folder.open(Folder.READ_WRITE)
             Message[] messagesUnsorted = folder.search(unseenFlagTerm)
             Message[] messages = folder.search(new ReceivedDateTerm(ComparisonTerm.GE, sinceDate), messagesUnsorted)
             folder.fetch(messages, fetchProfile)
 
             Boolean hasAttach = false
-
+            File f
             for (int messageIndex = 0; messageIndex < messages.length - 1; messageIndex++) {
                 messages[messageIndex].setFlag(Flags.Flag.SEEN, true)
             }
@@ -90,37 +91,34 @@ class AttachmentLoader {
                         continue; // dealing with attachments only
                     }
                     hasAttach = true
-                    Util.checkDirectory(dir + "\\" + folders[folderIndex] + "\\unprocessed")
-                    Util.checkDirectory(dir + "\\" + folders[folderIndex] + "\\processed")
-
                     InputStream is = bodyPart.getInputStream()
-                    File f = new File(dir + "\\" + folders[folderIndex] + "\\unprocessed\\", folders[folderIndex] + "_" + date + '.csv')
-
-                    FileOutputStream fos = new FileOutputStream(f)
-                    byte[] buf = new byte[4096]
-                    int bytesRead
-                    while ((bytesRead = is.read(buf)) != -1) {
-                        fos.write(buf, 0, bytesRead)
-                    }
-                    fos.close()
-                    attachments.add(f)
+                    StreamUtil streamUtil = new StreamUtil()
+                    f = streamUtil.stream2file(is,malefolder + "_" + date)
+//                    TODO check file
+//                    File f = new File(dir + "\\" + folders[folderIndex] + "\\unprocessed\\", folders[folderIndex] + "_" + date + '.csv')
+//
+//                    FileOutputStream fos = new FileOutputStream(f)
+//                    byte[] buf = new byte[4096]
+//                    int bytesRead
+//                    while ((bytesRead = is.read(buf)) != -1) {
+//                        fos.write(buf, 0, bytesRead)
+//                    }
+//                    fos.close()
+//                    attachments.add(f)
                 }
 
                 if (hasAttach) {
                     messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, false)
-
+                    map.put(malefolder, f)
                 } else {
                     messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true)
                 }
                 println hasAttach
                 println "***************************************************"
                 println "***************************************************"
-                map.put(folders[folderIndex], hasAttach)
             }
-        }
-        map.findAll { it.value == true }
-
-        return map.findAll { it.value == true }
-                .keySet() as String[];
+//        return map.findAll { it.value == true }
+//                .keySet() as String[];
+        return map
     }
 }
