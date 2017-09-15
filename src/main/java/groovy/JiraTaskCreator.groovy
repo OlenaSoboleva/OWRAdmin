@@ -10,6 +10,7 @@ import com.atlassian.jira.rest.client.domain.input.*
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import com.atlassian.util.concurrent.Promise
 import loader.Util
+import org.apache.commons.io.FilenameUtils
 
 class JiraTaskCreator {
 
@@ -45,7 +46,7 @@ class JiraTaskCreator {
         Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex);
         String project = jiraProject
         Long issueTypeId = Long.parseLong(jiraIssueTypeId)
-        String summary = file.getName()+" Testing the Issue creation"
+        String summary = FilenameUtils.removeExtension(file.getName())
         String description = "Upload latest "+subTaskfolder+" to "+jiraEnvironment
 
         BasicIssue parentIssue = searchJqlPromiseTest.claim().getIssues()[0]

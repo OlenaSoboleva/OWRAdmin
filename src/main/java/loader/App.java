@@ -45,7 +45,7 @@ public class App {
                     jiraTaskCreator.jiraCreateSubTask(folder, file);
                     movefiles(folder);
                 }
-                emailReplier.emailReply(folder,resultUpload);
+//                emailReplier.emailReply(folder,resultUpload);
             }
 
         }
