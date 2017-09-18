@@ -30,18 +30,15 @@ public class EmailReplier {
         this.password = Util.getPasswordMail()
         this.session = Session.getInstance(props,
                 new Authenticator() {
-
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password)
                     }
                 });
         this.store = session.getStore("imaps")
         store.connect("imap.gmail.com", username, password)
-
         this.fetchProfile = new FetchProfile()
         this.seen = new Flags(Flags.Flag.SEEN)
         this.unseenFlagTerm = new FlagTerm(seen, false)
-
         fetchProfile.add(FetchProfile.Item.ENVELOPE)
         this.attachments = new ArrayList<File>()
     }
@@ -73,24 +70,22 @@ public class EmailReplier {
     }
 
     private errorReply(Message[] messages, int lastMessageIndex) {
-        Address[] to = new InternetAddress("selena.soboleva@gmail.com")
+        Address[] to = new InternetAddress("osob@cilkum.com")
         Message message = new MimeMessage(session)
         message = message.reply(false)
-        message.setSubject("RE: ERROR FILE LOADING" + messages[lastMessageIndex].subject)
+        message.setSubject("RE: ERROR FILE LOADING " + messages[lastMessageIndex].subject)
         message.setFrom(new InternetAddress(username))
         message.addRecipients(Message.RecipientType.TO, to)
         message.setText("ERROR FILE LOADING")
         Transport.send(message);
-        println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully with status info")
+        println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully with error status")
         messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true);
     }
 
     private successReply(Message[] messages, int lastMessageIndex) {
         Address[] all = messages[lastMessageIndex].allRecipients
-
         Address[] cc = all
                 .findAll { !(it == (new InternetAddress(username))) }
-
         Address[] to = messages[lastMessageIndex].from
         Message message = new MimeMessage(session)
         message = message.reply(false)

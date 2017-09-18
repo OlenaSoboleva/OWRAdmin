@@ -9,11 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class StreamUtil {
-    public static final String SUFFIX = ".csv";
-
-    public static File stream2file (InputStream in,String filename) throws IOException {
-        //TODO set normal filename
-        final File tempFile = File.createTempFile(filename, SUFFIX);
+    public static File stream2file(InputStream in, String filename) throws IOException {
+       final  File tempFile = new File(filename + ".csv");
         tempFile.deleteOnExit();
         try (FileOutputStream out = new FileOutputStream(tempFile)) {
             IOUtils.copy(in, out);

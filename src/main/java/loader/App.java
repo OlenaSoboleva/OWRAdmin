@@ -26,7 +26,8 @@ import java.util.Set;
 
 public class App {
     private static CloseableHttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
-    private static String baseURL = Util.getQaUrl();
+    private static String qaUrl = Util.getQaUrl();
+    private static String prodURL = Util.getProdUrl();
     private static List<String> folders = Util.getMailFolders();
 
     public static void main(String[] args) throws IOException {
@@ -39,17 +40,18 @@ public class App {
             Set<String> setFolders = loadingMap.keySet();
             File file;
             for (String folder : setFolders) {
-                    file = loadingMap.get(folder);
-                    Boolean resultUpload = httpPostFile(folder, baseURL, file);
-                    if (resultUpload) {
+                file = loadingMap.get(folder);
+                Boolean resultUpload = httpPostFile(folder, qaUrl, file);
+                if (resultUpload) {
+                    //add production env
 //                   httpPostFile(folder,prodURL,file);
-                        jiraTaskCreator.jiraCreateSubTask(folder, file);
-                    }
-//                emailReplier.emailReply(folder,resultUpload);
+                    jiraTaskCreator.jiraCreateSubTask(folder, file);
                 }
+                emailReplier.emailReply(folder, resultUpload);
             }
+        }
         System.exit(0);
-}
+    }
 
     private static boolean httpPostFile(String folder, String url, File file) throws IOException {
         boolean resultUpload = false;
@@ -72,8 +74,6 @@ public class App {
             if (result.contains("Successfully uploaded the file")) {
                 resultUpload = true;
             }
-//            TODO check incorrect file without assert
-//            Assert.assertThat(result, CoreMatchers.containsString("Successfully uploaded the file"));
         }
         return resultUpload;
     }

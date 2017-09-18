@@ -29,8 +29,6 @@ class AttachmentLoader {
     List<File> attachments
     Map map = [:]
 
-
-
     AttachmentLoader() {
         props.setProperty("mail.store.protocol", "imaps")
         props.setProperty("mail.imap.host", host)
@@ -41,15 +39,11 @@ class AttachmentLoader {
         this.password = Util.getPasswordMail()
         this.dir = Util.getMainFolder()
         this.session = Session.getDefaultInstance(props, null)
-
         this.store = session.getStore("imaps")
-
         store.connect(host, username, password)
-
         this.fetchProfile = new FetchProfile()
         this.seen = new Flags(Flags.Flag.SEEN)
         this.unseenFlagTerm = new FlagTerm(seen, false)
-
         fetchProfile.add(FetchProfile.Item.ENVELOPE)
         this.sinceDate = use(TimeCategory) {
             sinceDate = currentDate.clone() - 1.month
@@ -94,19 +88,7 @@ class AttachmentLoader {
                     InputStream is = bodyPart.getInputStream()
                     StreamUtil streamUtil = new StreamUtil()
                     f = streamUtil.stream2file(is,malefolder + "_" + date)
-//                    TODO check file
-//                    File f = new File(dir + "\\" + folders[folderIndex] + "\\unprocessed\\", folders[folderIndex] + "_" + date + '.csv')
-//
-//                    FileOutputStream fos = new FileOutputStream(f)
-//                    byte[] buf = new byte[4096]
-//                    int bytesRead
-//                    while ((bytesRead = is.read(buf)) != -1) {
-//                        fos.write(buf, 0, bytesRead)
-//                    }
-//                    fos.close()
-//                    attachments.add(f)
                 }
-
                 if (hasAttach) {
                     messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, false)
                     map.put(malefolder, f)
@@ -117,8 +99,6 @@ class AttachmentLoader {
                 println "***************************************************"
                 println "***************************************************"
             }
-//        return map.findAll { it.value == true }
-//                .keySet() as String[];
         return map
     }
 }
