@@ -53,7 +53,7 @@ class JiraTaskCreator {
         int startIndex = 0;
 
         Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex);
-        BasicIssue parentIssue = searchJqlPromiseTest.claim().getIssues()[0]
+        BasicIssue parentIssue = searchJqlPromiseTest.get().getIssues()[0]
         println "Parent issue: " + parentIssue.key
         parentIssue
     }
@@ -65,7 +65,7 @@ class JiraTaskCreator {
         String description = "Upload latest " + subTaskfolder + " to " + jiraEnvironment
         IssueInputBuilder issueBuilder = new IssueInputBuilder(project, issueTypeId, summary);
         issueBuilder.setDescription(description);
-        issueBuilder.setFixVersions(restClient.getIssueClient().getIssue(parentIssue.key).claim().getFixVersions())
+        issueBuilder.setFixVersions(restClient.getIssueClient().getIssue(parentIssue.key).get().getFixVersions())
         FieldInput groupField = generateRetailGroupFieldInput(restClient, parentIssue)
         issueBuilder.setFieldInput(groupField);
         IssueInput issueInput = issueBuilder.build();
@@ -76,9 +76,9 @@ class JiraTaskCreator {
 
     private createIssue(JiraRestClient restClient, IssueInput issueInput) {
         Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput);
-        BasicIssue basicIssue = promise.claim();
+        BasicIssue basicIssue = promise.get();
         Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey());
-        Issue issue = promiseJavaIssue.claim();
+        Issue issue = promiseJavaIssue.get();
         issue
     }
 
@@ -90,12 +90,12 @@ class JiraTaskCreator {
 
     private changeIssueStatus(JiraRestClient restClient, Issue issue) {
         final Transition transition = restClient.getIssueClient().getTransitions(issue.getTransitionsUri()).get().find({ p -> p.name == "Done" })
-        restClient.getIssueClient().transition(issue, new TransitionInput(transition.getId())).claim()
+        restClient.getIssueClient().transition(issue, new TransitionInput(transition.getId())).get()
     }
 
     private generateRetailGroupFieldInput(JiraRestClient restClient, BasicIssue parentIssue) {
-        String retailGroupId = restClient.getIssueClient().getIssue(parentIssue.key).claim().fields.findAll({ p -> p.name == "Retail Group" }).get(0).id
-        String retailGroupValue = restClient.getIssueClient().getIssue(parentIssue.key).claim().fields.findAll({ p -> p.name == "Retail Group" }).get(0).getValue().getJSONObject(0).get("value");
+        String retailGroupId = restClient.getIssueClient().getIssue(parentIssue.key).get().fields.findAll({ p -> p.name == "Retail Group" }).get(0).id
+        String retailGroupValue = restClient.getIssueClient().getIssue(parentIssue.key).get().fields.findAll({ p -> p.name == "Retail Group" }).get(0).getValue().getJSONObject(0).get("value");
         Map<String, Object> groupCustomField = new HashMap<String, Object>();
         groupCustomField.put("value", retailGroupValue);
         FieldInput groupField = new FieldInput(retailGroupId, Arrays.asList(new ComplexIssueInputFieldValue(groupCustomField)));
