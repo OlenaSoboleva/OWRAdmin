@@ -5,18 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class LoadProperties {
+public class PropertiesLoader {
 
     private final String PROP_FILE_NAME = "config.properties";
     private InputStream inputStream;
     private Properties props;
 
-    public LoadProperties() {
+    public PropertiesLoader()  {
         props = new Properties();
-    }
-
-    public void load() throws IOException {
-
         Properties prop = new Properties();
         inputStream = getClass().getClassLoader().getResourceAsStream(PROP_FILE_NAME);
 
@@ -29,7 +25,11 @@ public class LoadProperties {
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
-            inputStream.close();
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         props = prop;

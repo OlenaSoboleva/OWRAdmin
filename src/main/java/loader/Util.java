@@ -1,13 +1,11 @@
 package loader;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Util {
 
-    private static final String MAIN_FOLDER_PROPERTY_NAME = "mainFolder";
     private static final String QAURL = "qaUrl";
     private static final String PRODURL = "prodUrl";
     private static final String LOGIN = "login";
@@ -22,174 +20,64 @@ public class Util {
     private static final String JIRAPROJECT = "jiraproject";
     private static final String JIRAENVIRONMENT = "jiraenvironment";
     private static final String JIRAISSUETYPEID = "jiraIssueTypeId";
+    private static final PropertiesLoader prop = new PropertiesLoader();
 
     public static String getQaUrl() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(QAURL);
+        return prop.getPropertyValue(QAURL);
     }
 
     public static String getProdUrl() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(PRODURL);
+        return prop.getPropertyValue(PRODURL);
     }
 
     public static String getJiraUrl() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(JIRAURL);
+        return prop.getPropertyValue(JIRAURL);
     }
 
     public static String getLogin() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(LOGIN);
+        return prop.getPropertyValue(LOGIN);
     }
 
     public static String getPassword() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(PASSWORD);
+        return prop.getPropertyValue(PASSWORD);
     }
 
     public static String getUserNameMail() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(EMAILUSERNAME);
+        return prop.getPropertyValue(EMAILUSERNAME);
     }
 
     public static String getPasswordMail() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(EMAILPASSWORD);
+        return prop.getPropertyValue(EMAILPASSWORD);
     }
 
     public static List<String> getMailFolders() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String s = properties.getPropertyValue(MAIL_FOLDERS);
+        String s = prop.getPropertyValue(MAIL_FOLDERS);
         return new ArrayList<>(Arrays.asList(s.split(",")));
     }
 
     public static String getJiraLogin() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(JIRAUSERNAME);
+        return prop.getPropertyValue(JIRAUSERNAME);
     }
 
     public static String getJiraPassword() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(JIRAPASSWORD);
+        return prop.getPropertyValue(JIRAPASSWORD);
     }
 
 
     public static String getJiraJql() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(JIRAJQL);
+        return prop.getPropertyValue(JIRAJQL);
     }
 
     public static String getJiraProject() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(JIRAPROJECT);
+        return prop.getPropertyValue(JIRAPROJECT);
     }
 
     public static String getJiraEnvironment() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(JIRAENVIRONMENT);
+        return prop.getPropertyValue(JIRAENVIRONMENT);
     }
 
     public static String getJiraIssueTypeId() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(JIRAISSUETYPEID);
+        return prop.getPropertyValue(JIRAISSUETYPEID);
     }
 }
 

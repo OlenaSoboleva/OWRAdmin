@@ -41,20 +41,20 @@ public class App {
             File file;
             for (String folder : setFolders) {
                 file = loadingMap.get(folder);
-                Boolean resultUpload = httpPostFile(folder, qaUrl, file);
-                if (resultUpload) {
+                Boolean uploadSuccessful = httpPostFile(folder, qaUrl, file);
+                if (uploadSuccessful) {
                     //add production env
 //                   httpPostFile(folder,prodURL,file);
                     jiraTaskCreator.jiraCreateSubTask(folder, file);
                 }
-                emailReplier.emailReply(folder, resultUpload);
+                emailReplier.emailReply(folder, uploadSuccessful);
             }
         }
         System.exit(0);
     }
 
     private static boolean httpPostFile(String folder, String url, File file) throws IOException {
-        boolean resultUpload = false;
+        boolean uploadSuccessful = false;
         {
             HttpPost request = new HttpPost(url + "j_spring_security_check");
             ArrayList<NameValuePair> postParameters = new ArrayList<>();
@@ -72,10 +72,10 @@ public class App {
             request.setEntity(builder.build());
             String result = execute(request);
             if (result.contains("Successfully uploaded the file")) {
-                resultUpload = true;
+                uploadSuccessful = true;
             }
         }
-        return resultUpload;
+        return uploadSuccessful;
     }
 
     private static String execute(HttpPost request) throws IOException {

@@ -41,31 +41,6 @@
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-groovy</artifactId>
-            <version>${cucumber-jvm.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber-java.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <version>${cucumber-jvm.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-html</artifactId>
-            <version>${cucumber-html.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>gherkin</artifactId>
-            <version>${gherkin.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.james</groupId>
             <artifactId>apache-mime4j</artifactId>
             <version>0.6</version>
@@ -208,10 +183,6 @@
         <repository>
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
-        </repository>
-        <repository>
-            <id>cukes</id>
-            <url>http://cukes.info/maven</url>
         </repository>
         <repository>
             <id>labs</id>
