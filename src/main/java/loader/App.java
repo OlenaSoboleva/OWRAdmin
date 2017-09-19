@@ -1,8 +1,8 @@
 package loader;
 
-import groovy.AttachmentLoader;
-import groovy.EmailReplier;
-import groovy.JiraTaskCreator;
+import handler.AttachmentLoader;
+import handler.EmailReplier;
+import handler.JiraTaskCreator;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

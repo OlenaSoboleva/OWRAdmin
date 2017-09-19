@@ -1,4 +1,4 @@
-package groovy
+package handler
 
 import com.atlassian.jira.rest.client.JiraRestClient
 import com.atlassian.jira.rest.client.JiraRestClientFactory
