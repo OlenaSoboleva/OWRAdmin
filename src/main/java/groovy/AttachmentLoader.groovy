@@ -18,7 +18,6 @@ class AttachmentLoader {
     Properties props = new Properties()
     String username
     String password
-    String dir
     Session session
     Store store
     FetchProfile fetchProfile
@@ -37,7 +36,6 @@ class AttachmentLoader {
 
         this.username = Util.getUserNameMail()
         this.password = Util.getPasswordMail()
-        this.dir = Util.getMainFolder()
         this.session = Session.getDefaultInstance(props, null)
         this.store = session.getStore("imaps")
         store.connect(host, username, password)

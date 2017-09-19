@@ -1,22 +1,9 @@
 package loader;
 
-import org.joda.time.DateTime;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-
-import static java.time.LocalDate.parse;
 
 public class Util {
 
@@ -35,18 +22,6 @@ public class Util {
     private static final String JIRAPROJECT = "jiraproject";
     private static final String JIRAENVIRONMENT = "jiraenvironment";
     private static final String JIRAISSUETYPEID = "jiraIssueTypeId";
-
-    public static String getMainFolder() {
-        LoadProperties properties = new LoadProperties();
-
-        try {
-            properties.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties.getPropertyValue(MAIN_FOLDER_PROPERTY_NAME);
-    }
 
     public static String getQaUrl() {
         LoadProperties properties = new LoadProperties();
@@ -144,7 +119,7 @@ public class Util {
         return new ArrayList<>(Arrays.asList(s.split(",")));
     }
 
-     public static String getJiraLogin() {
+    public static String getJiraLogin() {
         LoadProperties properties = new LoadProperties();
 
         try {
@@ -192,6 +167,7 @@ public class Util {
 
         return properties.getPropertyValue(JIRAPROJECT);
     }
+
     public static String getJiraEnvironment() {
         LoadProperties properties = new LoadProperties();
 
