@@ -77,7 +77,7 @@ public class EmailReplier {
         message.setFrom(new InternetAddress(username))
         message.addRecipients(Message.RecipientType.TO, to)
         message.setText("ERROR FILE LOADING")
-        Transport.send(message);
+        Transport.send(message)
         println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully with error status")
         messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true);
     }
@@ -96,8 +96,8 @@ public class EmailReplier {
         message.addRecipients(Message.RecipientType.TO, to)
         message.addRecipients(Message.RecipientType.CC, cc)
         message.setText("File has been loaded")
-        Transport.send(message);
+        Transport.send(message)
         println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully")
-        messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true);
+        messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true)
     }
 }

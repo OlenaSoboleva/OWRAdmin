@@ -47,7 +47,7 @@ public class App {
                     httpPostFile(folder, prodURL, file);
                     jiraTaskCreator.jiraCreateSubTask(folder, file);
                 }
-                emailReplier.emailReply(folder, uploadSuccessful);
+//                emailReplier.emailReply(folder, uploadSuccessful);
             }
         }
         System.exit(0);

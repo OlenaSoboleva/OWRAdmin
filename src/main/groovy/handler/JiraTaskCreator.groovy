@@ -36,9 +36,9 @@ class JiraTaskCreator {
 
     }
     public void jiraCreateSubTask(String subTaskfolder, File file) {
-        JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
-        URI uri = new URI(jiraUrl);
-        restClient = factory.createWithBasicHttpAuthentication(uri, jiraUserName, jiraPassword);
+        JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory()
+        URI uri = new URI(jiraUrl)
+        restClient = factory.createWithBasicHttpAuthentication(uri, jiraUserName, jiraPassword)
         BasicIssue parentIssue = getParentIssue(restClient)
         IssueInput issueInput = setIssueFields(file, subTaskfolder, restClient, parentIssue)
         Issue issue = createIssue(restClient, issueInput)
@@ -48,11 +48,11 @@ class JiraTaskCreator {
     }
 
     private getParentIssue(JiraRestClient restClient) {
-        String jql = jiraJql;
-        int maxPerQuery = 1;
-        int startIndex = 0;
+        String jql = jiraJql
+        int maxPerQuery = 1
+        int startIndex = 0
 
-        Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex);
+        Promise<SearchResult> searchJqlPromiseTest = restClient.getSearchClient().searchJql(jql, maxPerQuery, startIndex)
         BasicIssue parentIssue = searchJqlPromiseTest.get().getIssues()[0]
         println "Parent issue: " + parentIssue.key
         parentIssue
@@ -63,28 +63,28 @@ class JiraTaskCreator {
         Long issueTypeId = Long.parseLong(jiraIssueTypeId)
         String summary = FilenameUtils.removeExtension(file.getName())
         String description = "Upload latest " + subTaskfolder + " to " + jiraEnvironment
-        IssueInputBuilder issueBuilder = new IssueInputBuilder(project, issueTypeId, summary);
-        issueBuilder.setDescription(description);
+        IssueInputBuilder issueBuilder = new IssueInputBuilder(project, issueTypeId, summary)
+        issueBuilder.setDescription(description)
         issueBuilder.setFixVersions(restClient.getIssueClient().getIssue(parentIssue.key).get().getFixVersions())
         FieldInput groupField = generateRetailGroupFieldInput(restClient, parentIssue)
-        issueBuilder.setFieldInput(groupField);
-        IssueInput issueInput = issueBuilder.build();
+        issueBuilder.setFieldInput(groupField)
+        IssueInput issueInput = issueBuilder.build()
         generateEnvironmentIssueInput(issueInput)
         generateParentIssueInput(issueInput, "parent", parentIssue.key)
         issueInput
     }
 
     private createIssue(JiraRestClient restClient, IssueInput issueInput) {
-        Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput);
-        BasicIssue basicIssue = promise.get();
-        Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey());
-        Issue issue = promiseJavaIssue.get();
+        Promise<BasicIssue> promise = restClient.getIssueClient().createIssue(issueInput)
+        BasicIssue basicIssue = promise.get()
+        Promise<Issue> promiseJavaIssue = restClient.getIssueClient().getIssue(basicIssue.getKey())
+        Issue issue = promiseJavaIssue.get()
         issue
     }
 
     private void addAttachment(Issue issue,File file){
         InputStream stream = new FileInputStream(file)
-        URI attachmentURI = issue.getAttachmentsUri();
+        URI attachmentURI = issue.getAttachmentsUri()
         restClient.issueClient.addAttachment(attachmentURI, stream, file.getName())
     }
 
@@ -95,10 +95,10 @@ class JiraTaskCreator {
 
     private generateRetailGroupFieldInput(JiraRestClient restClient, BasicIssue parentIssue) {
         String retailGroupId = restClient.getIssueClient().getIssue(parentIssue.key).get().fields.findAll({ p -> p.name == "Retail Group" }).get(0).id
-        String retailGroupValue = restClient.getIssueClient().getIssue(parentIssue.key).get().fields.findAll({ p -> p.name == "Retail Group" }).get(0).getValue().getJSONObject(0).get("value");
-        Map<String, Object> groupCustomField = new HashMap<String, Object>();
-        groupCustomField.put("value", retailGroupValue);
-        FieldInput groupField = new FieldInput(retailGroupId, Arrays.asList(new ComplexIssueInputFieldValue(groupCustomField)));
+        String retailGroupValue = restClient.getIssueClient().getIssue(parentIssue.key).get().fields.findAll({ p -> p.name == "Retail Group" }).get(0).getValue().getJSONObject(0).get("value")
+        Map<String, Object> groupCustomField = new HashMap<String, Object>()
+        groupCustomField.put("value", retailGroupValue)
+        FieldInput groupField = new FieldInput(retailGroupId, Arrays.asList(new ComplexIssueInputFieldValue(groupCustomField)))
         groupField
     }
 
