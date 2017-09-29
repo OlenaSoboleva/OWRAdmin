@@ -20,6 +20,7 @@ public class Util {
     private static final String JIRAPROJECT = "jiraproject";
     private static final String JIRAENVIRONMENT = "jiraenvironment";
     private static final String JIRAISSUETYPEID = "jiraIssueTypeId";
+    private static final String MAILERRORADDRESS = "mailErrorAddress";
     private static final PropertiesLoader prop = new PropertiesLoader();
 
     public static String getQaUrl() {
@@ -79,5 +80,10 @@ public class Util {
     public static String getJiraIssueTypeId() {
         return prop.getPropertyValue(JIRAISSUETYPEID);
     }
+
+    public static String getMailErrorAdress() {
+        return prop.getPropertyValue(MAILERRORADDRESS);
+    }
 }
+
 

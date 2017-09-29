@@ -12,6 +12,7 @@ public class EmailReplier {
     Properties props = new Properties()
     String username
     String password
+    String mailErrorAddress
     Session session
     Store store
     FetchProfile fetchProfile
@@ -28,6 +29,7 @@ public class EmailReplier {
         props.put("mail.smtp.port", "465")
         this.username = Util.getUserNameMail()
         this.password = Util.getPasswordMail()
+        this.mailErrorAddress = Util.getMailErrorAdress()
         this.session = Session.getInstance(props,
                 new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -70,7 +72,7 @@ public class EmailReplier {
     }
 
     private errorReply(Message[] messages, int lastMessageIndex) {
-        Address[] to = new InternetAddress("osob@cilkum.com")
+        Address[] to = new InternetAddress(mailErrorAddress)
         Message message = new MimeMessage(session)
         message = message.reply(false)
         message.setSubject("RE: ERROR FILE LOADING " + messages[lastMessageIndex].subject)
