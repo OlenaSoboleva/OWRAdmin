@@ -2,10 +2,7 @@ package handler
 
 import com.atlassian.jira.rest.client.JiraRestClient
 import com.atlassian.jira.rest.client.JiraRestClientFactory
-import com.atlassian.jira.rest.client.domain.BasicIssue
-import com.atlassian.jira.rest.client.domain.Issue
-import com.atlassian.jira.rest.client.domain.SearchResult
-import com.atlassian.jira.rest.client.domain.Transition
+import com.atlassian.jira.rest.client.domain.*
 import com.atlassian.jira.rest.client.domain.input.*
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import com.atlassian.util.concurrent.Promise
@@ -35,6 +32,7 @@ class JiraTaskCreator {
         this.jiraEnvironment = Util.getJiraEnvironment()
 
     }
+
     public void jiraCreateSubTask(String subTaskfolder, File file) {
         JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory()
         URI uri = new URI(jiraUrl)
@@ -44,7 +42,7 @@ class JiraTaskCreator {
         Issue issue = createIssue(restClient, issueInput)
         addAttachment(issue, file)
         changeIssueStatus(restClient, issue)
-        System.out.println(String.format("New issue created is: %s\r\n", issue.getSummary() + "\n" + issue.key + "\n" + issue.self+ "\n" + issue.status))
+        System.out.println(String.format("New issue is created: %s\r\n", issue.getSummary() + "\n" + issue.key))
     }
 
     private getParentIssue(JiraRestClient restClient) {
@@ -82,7 +80,7 @@ class JiraTaskCreator {
         issue
     }
 
-    private void addAttachment(Issue issue,File file){
+    private void addAttachment(Issue issue, File file) {
         InputStream stream = new FileInputStream(file)
         URI attachmentURI = issue.getAttachmentsUri()
         restClient.issueClient.addAttachment(attachmentURI, stream, file.getName())
@@ -90,7 +88,9 @@ class JiraTaskCreator {
 
     private changeIssueStatus(JiraRestClient restClient, Issue issue) {
         final Transition transition = restClient.getIssueClient().getTransitions(issue.getTransitionsUri()).get().find({ p -> p.name == "Done" })
-        restClient.getIssueClient().transition(issue, new TransitionInput(transition.getId())).get()
+        Collection<FieldInput> fieldInputs = Arrays.asList(new FieldInput("resolution", ComplexIssueInputFieldValue.with("name", "Done")));
+        final TransitionInput transitionInput = new TransitionInput(transition.getId(), fieldInputs);
+        restClient.getIssueClient().transition(issue.getTransitionsUri(), transitionInput).get();
     }
 
     private generateRetailGroupFieldInput(JiraRestClient restClient, BasicIssue parentIssue) {
