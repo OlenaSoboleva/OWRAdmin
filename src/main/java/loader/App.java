@@ -47,7 +47,7 @@ public class App {
                     httpPostFile(folder, prodURL, file);
                     jiraTaskCreator.jiraCreateSubTask(folder, file);
                 }
-                emailReplier.emailReply(folder, uploadSuccessful);
+//                emailReplier.emailReply(folder, uploadSuccessful);
             }
         }
         System.exit(0);
@@ -58,8 +58,8 @@ public class App {
         {
             HttpPost request = new HttpPost(url + "j_spring_security_check");
             ArrayList<NameValuePair> postParameters = new ArrayList<>();
-            postParameters.add(new BasicNameValuePair("j_password", Util.getLogin()));
-            postParameters.add(new BasicNameValuePair("j_username", Util.getPassword()));
+            postParameters.add(new BasicNameValuePair("j_password", Util.getPassword()));
+            postParameters.add(new BasicNameValuePair("j_username", Util.getLogin()));
             request.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
             execute(request);
         }
