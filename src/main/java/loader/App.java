@@ -43,11 +43,10 @@ public class App {
                 file = loadingMap.get(folder);
                 Boolean uploadSuccessful = httpPostFile(folder, qaUrl, file);
                 if (uploadSuccessful) {
-                    //TODO prodURL  will be changed after testing
                     httpPostFile(folder, prodURL, file);
                     jiraTaskCreator.jiraCreateSubTask(folder, file);
                 }
-//                emailReplier.emailReply(folder, uploadSuccessful);
+                emailReplier.emailReply(folder, uploadSuccessful);
             }
         }
         System.exit(0);

@@ -61,7 +61,9 @@ public class EmailReplier {
                         continue; // dealing with attachments only
                     }
                    if(result) {
-                       successReply(messages, lastMessageIndex)
+                       //to change to successReply  when correct gmail mailbox will be used
+                     successReply(messages, lastMessageIndex)
+//                       successReplyToAdmin(messages, lastMessageIndex)
                    }
                     else{
                        errorReply(messages, lastMessageIndex)
@@ -97,9 +99,24 @@ public class EmailReplier {
         message.setReplyTo(to)
         message.addRecipients(Message.RecipientType.TO, to)
         message.addRecipients(Message.RecipientType.CC, cc)
-        message.setText("File has been loaded")
+        message.setText("Hi all,\n" +
+                "the file has been uploaded.")
         Transport.send(message)
         println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully")
         messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true)
+    }
+
+    private successReplyToAdmin(Message[] messages, int lastMessageIndex) {
+        Address[] to = new InternetAddress(mailErrorAddress)
+        Message message = new MimeMessage(session)
+        message = message.reply(false)
+        message.setSubject("RE: " + messages[lastMessageIndex].subject)
+        message.setFrom(new InternetAddress(mailErrorAddress))
+        message.addRecipients(Message.RecipientType.TO, to)
+        message.setText("Hi all,\n" +
+                "the file has been uploaded.")
+        Transport.send(message)
+        println(messages[lastMessageIndex].subject + " received on: " + messages[lastMessageIndex].receivedDate + " message replied successfully")
+        messages[lastMessageIndex].setFlag(Flags.Flag.SEEN, true);
     }
 }
