@@ -1,5 +1,6 @@
 package handler
 
+import com.sun.mail.util.MailSSLSocketFactory
 import groovy.time.TimeCategory
 import loader.StreamUtil
 import loader.Util
@@ -29,10 +30,16 @@ class AttachmentLoader {
     Map map = [:]
 
     AttachmentLoader() {
+        MailSSLSocketFactory sf = new MailSSLSocketFactory();
+        sf.setTrustAllHosts(true);
         props.setProperty("mail.store.protocol", "imaps")
-        props.setProperty("mail.imap.host", host)
-        props.setProperty("mail.imap.port", port)
-        props.setProperty("mail.imap.ssl.enable", "true")
+        props.setProperty("mail.imaps.host", host)
+        props.setProperty("mail.imaps.port", port)
+        props.setProperty("mail.imaps.ssl.enable", "true")
+        props.setProperty("mail.imaps.auth", "true");
+        props.setProperty("mail.debug", "true");
+        props.setProperty("https.protocols", "TLSv1.2")
+
 
         this.username = Util.getUserNameMail()
         this.password = Util.getPasswordMail()

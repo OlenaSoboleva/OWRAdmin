@@ -18,10 +18,7 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class App {
@@ -30,7 +27,9 @@ public class App {
     private static String prodURL = Util.getProdUrl();
     private static List<String> folders = Util.getMailFolders();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Date date = new Date();
+        System.out.println(date.toString());
         for (int folderIndex = 0; folderIndex < folders.size(); folderIndex++) {
 
             JiraTaskCreator jiraTaskCreator = new JiraTaskCreator();
@@ -49,6 +48,8 @@ public class App {
                 emailReplier.emailReply(folder, uploadSuccessful);
             }
         }
+        Date finish = new Date();
+        System.out.println(finish.toString());
         System.exit(0);
     }
 

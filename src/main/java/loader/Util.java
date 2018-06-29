@@ -21,6 +21,7 @@ public class Util {
     private static final String JIRAENVIRONMENT = "jiraenvironment";
     private static final String JIRAISSUETYPEID = "jiraIssueTypeId";
     private static final String MAILERRORADDRESS = "mailErrorAddress";
+    private static final String KEY = "key";
     private static final PropertiesLoader prop = new PropertiesLoader();
 
     public static String getQaUrl() {
@@ -40,7 +41,14 @@ public class Util {
     }
 
     public static String getPassword() {
-        return prop.getPropertyValue(PASSWORD);
+        String password = null;
+        try {
+            password = AESCrypt.decrypt(prop.getPropertyValue(PASSWORD));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return password;
     }
 
     public static String getUserNameMail() {
@@ -48,7 +56,14 @@ public class Util {
     }
 
     public static String getPasswordMail() {
-        return prop.getPropertyValue(EMAILPASSWORD);
+        String emailpassword = null;
+        try {
+            emailpassword = AESCrypt.decrypt(prop.getPropertyValue(EMAILPASSWORD));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return emailpassword;
     }
 
     public static List<String> getMailFolders() {
@@ -61,7 +76,14 @@ public class Util {
     }
 
     public static String getJiraPassword() {
-        return prop.getPropertyValue(JIRAPASSWORD);
+        String jirapassword = null;
+        try {
+            jirapassword = AESCrypt.decrypt(prop.getPropertyValue(JIRAPASSWORD));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jirapassword;
     }
 
 
@@ -83,6 +105,10 @@ public class Util {
 
     public static String getMailErrorAdress() {
         return prop.getPropertyValue(MAILERRORADDRESS);
+    }
+
+    public static String getKey() {
+        return prop.getPropertyValue(KEY);
     }
 }
 

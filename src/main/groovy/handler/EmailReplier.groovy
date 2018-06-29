@@ -1,5 +1,6 @@
 package handler
 
+import com.sun.mail.util.MailSSLSocketFactory
 import loader.Util
 import org.apache.commons.lang.StringUtils
 
@@ -21,12 +22,15 @@ public class EmailReplier {
     List<File> attachments
 
     EmailReplier() {
-
+        MailSSLSocketFactory sf = new MailSSLSocketFactory();
+        sf.setTrustAllHosts(true);
         props.put("mail.smtp.host", "smtp.gmail.com")
         props.put("mail.smtp.socketFactory.port", "465")
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory")
         props.put("mail.smtp.auth", "true")
         props.put("mail.smtp.port", "465")
+        props.setProperty("mail.debug", "true");
+        props.setProperty("https.protocols", "TLSv1.2")
         this.username = Util.getUserNameMail()
         this.password = Util.getPasswordMail()
         this.mailErrorAddress = Util.getMailErrorAdress()
