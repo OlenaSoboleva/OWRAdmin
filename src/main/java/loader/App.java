@@ -28,8 +28,6 @@ public class App {
     private static List<String> folders = Util.getMailFolders();
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        Date date = new Date();
-        System.out.println(date.toString());
         for (int folderIndex = 0; folderIndex < folders.size(); folderIndex++) {
 
             JiraTaskCreator jiraTaskCreator = new JiraTaskCreator();
@@ -42,14 +40,13 @@ public class App {
                 file = loadingMap.get(folder);
                 Boolean uploadSuccessful = httpPostFile(folder, qaUrl, file);
                 if (uploadSuccessful) {
-                    httpPostFile(folder, prodURL, file);
+                    uploadSuccessful= httpPostFile(folder, prodURL, file);
+                    if (uploadSuccessful) {
                     jiraTaskCreator.jiraCreateSubTask(folder, file);
                 }
                 emailReplier.emailReply(folder, uploadSuccessful);
-            }
+            }}
         }
-        Date finish = new Date();
-        System.out.println(finish.toString());
         System.exit(0);
     }
 
@@ -79,13 +76,6 @@ public class App {
     }
 
     private static String execute(HttpPost request) throws IOException {
-        System.out.println(request);
-        if (request.getEntity().getContentLength() > 25600L) {
-            System.out.println("Content is too long to display");
-        } else {
-            String content = IOUtils.toString(request.getEntity().getContent(), Charset.defaultCharset());
-            System.out.println(content);
-        }
         CloseableHttpResponse response = httpClient.execute(request);
         System.out.println(response);
         String responseString = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());

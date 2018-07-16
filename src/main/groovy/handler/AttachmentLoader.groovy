@@ -37,7 +37,7 @@ class AttachmentLoader {
         props.setProperty("mail.imaps.port", port)
         props.setProperty("mail.imaps.ssl.enable", "true")
         props.setProperty("mail.imaps.auth", "true");
-        props.setProperty("mail.debug", "true");
+//        props.setProperty("mail.debug", "true");
         props.setProperty("https.protocols", "TLSv1.2")
 
 
