@@ -110,6 +110,15 @@ public class Util {
     public static String getKey() {
         return prop.getPropertyValue(KEY);
     }
+
+    public static boolean isReplierEnabled() {
+        String emailReplierEnabled = prop.getPropertyValue("emailReplierEnabled");
+        try {
+            return Boolean.parseBoolean(emailReplierEnabled);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
 
 
