@@ -14,20 +14,29 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+@SpringBootApplication
+public class AdminApplication implements ApplicationRunner {
 
-public class App {
     private static CloseableHttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
     private static String qaUrl = Util.getQaUrl();
     private static String prodURL = Util.getProdUrl();
     private static List<String> folders = Util.getMailFolders();
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
         for (int folderIndex = 0; folderIndex < folders.size(); folderIndex++) {
 
             JiraTaskCreator jiraTaskCreator = new JiraTaskCreator();
@@ -42,12 +51,14 @@ public class App {
                 if (uploadSuccessful) {
                     uploadSuccessful= httpPostFile(folder, prodURL, file);
                     if (uploadSuccessful) {
-                    jiraTaskCreator.jiraCreateSubTask(folder, file);
-                }
-                emailReplier.emailReply(folder, uploadSuccessful);
-            }}
+                        jiraTaskCreator.jiraCreateSubTask(folder, file);
+                    }
+                    if (Util.isReplierEnabled()) {
+                        emailReplier.emailReply(folder, uploadSuccessful);
+                    }
+
+                }}
         }
-        System.exit(0);
     }
 
     private static boolean httpPostFile(String folder, String url, File file) throws IOException {
@@ -82,4 +93,9 @@ public class App {
         System.out.println(responseString);
         return responseString;
     }
+
+    public static void main(String[] args) {
+        SpringApplication.run(AdminApplication.class, args);
+    }
+
 }
